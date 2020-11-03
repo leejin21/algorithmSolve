@@ -16,9 +16,9 @@ mac os catalina 10.15.7, vscode에서 c/c++ extensions를 깐 채로 실행함.
 
 # 5. terminal에서 다음과 같이 명령어 입력
 ~/Desktop/Dev/algorithms                       14:58:47
-❯ cd assignment2
+❯ cd c_assignments/convex-hull
 
-~/Desktop/Dev/algorithms/assignment2           14:58:51
-❯ ./efficient_convex_hull.out 20
+~/Desktop/Dev/algorithms/c_assignments/convex-hull           14:58:51
+❯ time ./efficient_convex_hull.out 20 > convex.R
 
 ```

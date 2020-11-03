@@ -13,8 +13,8 @@ void change(int * pointer){
 
 int main(void){
     int number = 2;
-    printf("%d\n", number);
+    fprintf(stderr, "%d\n", number);
     change(&number);            // number의 주소 보냄
-    printf("%d\n", number);
+    fprintf(stderr, "%d\n", number);
 }
 
