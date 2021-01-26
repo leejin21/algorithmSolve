@@ -110,7 +110,6 @@ def getPreOrder(in_stt, in_end, p_stt, p_end):
             getPreOrder(in_left_stt, in_left_end, p_left_stt, p_left_end)
             getPreOrder(in_right_stt, in_right_end, p_right_stt, p_right_end)
 
-
 def showOutput():
     for i, v in enumerate(preorder):
         if i != len(preorder) -1:
