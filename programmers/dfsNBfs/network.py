@@ -52,7 +52,6 @@ def solution(n, computers):
     return net_cnt
 
 
-
 print(solution(3, [[1, 1, 0], [1, 1, 0], [0, 0, 1]]))
 # 2
 
