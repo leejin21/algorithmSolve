@@ -1,3 +1,5 @@
+# https://programmers.co.kr/learn/courses/30/lessons/43164
+# 프로그래머스 여행경로
 '''
 PROBLEM
 
@@ -16,70 +18,62 @@ tickets의 각 행 [a, b]는 a 공항에서 b 공항으로 가는 항공권이 �
 '''
 SOLUTION
 
-의존성 그래프, DAG
-: DAG인 이유 => 방향 그래프, 사이클이 없음.
-
-dfs로 위상 정렬
-
-********************************************
+==1번 시도==
 DAG가 아님.. 사이클 존재함.
 따라서 그냥 방향 그래프대로 풀면 될 듯.
 
-
 dictionary time complexity
 https://wiki.python.org/moin/TimeComplexity
-'''
 
-graph = dict(); visited = dict()
+==2번 시도==
+설마설마했는데 같은 내용의 티켓이 있는 반례가 있었다.
+https://programmers.co.kr/questions/15603
+
+tickets = [['ICN', 'A'], ['ICN', 'A'], ['A', 'ICN'], ['A' , 'C']]
+answer = ['ICN', 'A', 'ICN', 'A', 'C']
+'''
+from collections import defaultdict
+
+graph = defaultdict(dict)
+# (예) graph = defaultdict(<class 'dict'>, {'ICN': {'A': 2}, 'A': {'ICN': 1, 'C': 1}})
+
 answer = []
 
 def solution(tickets):
-    global answer
-    # * adjacent list 만들기
-    getSortedAirports(tickets)
-    
+    global graph
+    getGraph(tickets)
     dfs('ICN')
-
-    # for ap in sorted(graph.keys()):
-    #     if not visited[ap]:
-    #         dfs(ap)
-
     answer.reverse()
     return answer
 
 def dfs(ap):
-    visited[ap] = True
+    # * graph에 담긴 ticket들 알파벳 순으로 소모하기
+    global graph
     for dest in sorted(graph[ap]):
-        if not visited[dest]:
+        if graph[ap][dest] > 0:
+            # 방문 시 티켓 소모, 스택에 넣어두기
+            graph[ap][dest] -= 1
             dfs(dest)
+    # dfs, 가장 깊은 노드부터 기록 -> solution에서 reverse해 줌
     answer.append(ap)
 
+def getGraph(tickets):
+    # * graph에 tickets 정보 저장
+    # O(len(tickets))
+    global graph
+    for a1, a2 in tickets:
+        try:
+            if graph[a1][a2] > 0:
+                # ! 2번 시도 반례 고려
+                # 반례 = 출발도착이 같은 티켓이 2개 이상 있는 경우: graph에 방향과 해당 내용의 티켓 수 정보 저장.
+                graph[a1][a2] += 1
+        except:
+            graph[a1][a2] = 1
 
-def getSortedAirports(tickets):
-    # tickets에서 알파벳 순서대로 찾기, 딕셔너리로.
-    # O(2*len(tickets) + nlogn)
-    # airports = []; graph = []
-    global graph, visited
-    # 각 1D 리스트, 2D 리스트
-    for tl in tickets:
-        # print(tl[0], tl[1])
-
-        if tl[0] in graph.keys():
-            # 이미 추가한 stt 노드인 경우
-            graph[tl[0]].append(tl[1])
-            
-        else:
-            # 처음 보는 stt 노드인 경우
-            graph[tl[0]] = [tl[1]]
-            visited[tl[0]] = False
-        
-        if tl[1] not in graph.keys():
-            # dest 노드 추가해주기
-            graph[tl[1]] = []
-            visited[tl[1]] = False
-
-
-# print(solution([["ICN", "JFK"], ["HND", "IAD"], ["JFK", "HND"]]))
-print(solution([["ICN", "SFO"], ["ICN", "ATL"], ["SFO", "ATL"], ["ATL", "ICN"], ["ATL", "SFO"]]))
-print(graph)
-print(visited)
+# tickets = [['ICN', 'A'], ['ICN', 'A'], ['A', 'ICN'], ['A' , 'C']]
+# solution(tickets)
+# solution([["ICN", "JFK"], ["HND", "IAD"], ["JFK", "HND"]])
+# print(solution([["ICN", "SFO"], ["ICN", "ATL"], ["SFO", "ATL"], ["ATL", "ICN"], ["ATL", "SFO"]]))
+solution([["ICN", "SFO"], ["ICN", "ATL"], ["SFO", "ATL"], ["ATL", "ICN"], ["ATL", "SFO"]])
+# print(graph)
+# print(visited)
