@@ -34,7 +34,7 @@ def solution(begin, target, words):
         return 0
     stack.append([begin, -1, 0])
     
-    # * dfs, 가치치기 있음.
+    # * dfs, 가지치기 있음.
     while(stack):
         cur, cur_pos, cnt = stack.pop()
         # 차례로 단어, words에서 단어의 인덱스 위치, 현재까지 루트에서 변환한 cnt 개수
