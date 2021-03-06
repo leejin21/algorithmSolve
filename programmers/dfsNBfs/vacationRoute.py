@@ -48,6 +48,7 @@ def solution(tickets):
 
 def dfs(ap):
     # * graph에 담긴 ticket들 알파벳 순으로 소모하기
+    # a = 연결된 노드의 개수, 평균 O(aloga * v + e)으로 추정.
     global graph
     for dest in sorted(graph[ap]):
         if graph[ap][dest] > 0:

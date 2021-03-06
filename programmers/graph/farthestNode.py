@@ -20,6 +20,8 @@ ANSWER
 bfs로.
 마지막에 최대 값 가지는 간선의 인덱스 찾고, 해당 인덱스와 동일한 값 가지는 노드 개수 세기.
 
+deque 말고 queue로 구현해 보기(제대로)
+
 '''
 # * MY SOLUTION
 from queue import deque
@@ -69,6 +71,7 @@ print(solution(6, [[3, 6], [4, 3], [3, 2], [1, 3], [1, 2], [2, 4], [5, 2]]))
 
 # * OTHERS SOLUTION
 # 출처: https://donis-note.medium.com/프로그래머스-가장-먼-노드-level-3-python-풀이-248455cfa49d
+
 
 '''
 https://www.daleseo.com/python-collections-defaultdict/
