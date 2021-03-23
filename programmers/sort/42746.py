@@ -51,7 +51,6 @@ def try1(numbers):
 def try2(numbers):
     # 삽입 정렬 구현: 시간 초과
     def needSwap(x, y):
-        # print(str(x)+str(y), str(y)+str(x))
         return str(x) + str(y) > str(y) + str(x)
     for i in range(1, len(numbers)):
         # numbers[i]
@@ -72,8 +71,8 @@ def solution(numbers):
     return str(int(''.join(sorted(ans, key=cmp_to_key(comparator), reverse=True))))
     
 
-print(solution([6, 10, 2]))
-print(solution([3, 30, 34, 5, 9]))
+print(try1([6, 10, 2]))
+print(try1([3, 30, 34, 5, 9]))
 print(solution([1, 10, 5, 8]))
 
 
