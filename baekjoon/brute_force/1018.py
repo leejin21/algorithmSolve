@@ -33,28 +33,49 @@ j 후보: 0 ~ M-8
 시간 복잡도는 따라서 O(NM)
 
 try1: O(MN*8*8)
+매 i, j 후보마다 해당 범위 내의 칠하는 부분을 체크해서(8*8) 더하기
 
-1. 매 i, j 후보마다 해당 범위 내의 칠하는 부분을 체크해서(8*8) 더하기
+-> 오류: cntB와 cntW 두개로 나뉘어야 한다고 함.
+이유 = 왼쪽 위가 블랙이고, 나머지는 왼쪽 위만 바꾸면 되는.. 그런 구성일 수 있기 떄문
+****왼쪽위는 고정값이 아니기 떄문!!!*****
+
+try2:
+따라서 왼쪽 위에서부터 어느 j,i번쨰 인덱스가 짝수만큼 먼 경우
+짝수만큼 먼 인덱스에 b로 규칙을 맞춰 색칠하게 되는 경우 = b_cnt
+                w로 규칙을 맞춰 색칠하게 되는 경우 = w_cnt
+
+그래서 b_cnt, w_cnt 중 나중에 덜 추가되는 걸로.
 
 
+*******무턱대로 하지말고 예시 딱 하나라도 들어서 한번 해 보기...*********
 '''
 
 
-def try1():
-    N, M = map(lambda i: int(i), input().split())
-    board = list(map(lambda i: input(), range(N)))
-    print(board)
-    MIN = 100
+def main():
+    M,N = map(lambda i: int(i), input().split())
+    board = list(map(lambda i: input(), range(M)))
+    BMIN = 100; WMIN = 100
+
     for i in range(N-8+1):
         for j in range(M-8+1):
-            cnt = 0
+            bcnt = 0; wcnt = 0; f_val = board[j][i]
             for x in range(i, i+8):
                 for y in range(j, j+8):
-                    cnt += 1 if board[y][x] != board[j][i] else 0
-            MIN = cnt if cnt > MIN else MIN
+                    if ((x+y-(i+j)) % 2) == 0:
+                        # i,j 로부터 짝수만큼 떨어져 있음
+                        if board[y][x] == 'B':
+                            wcnt += 1
+                        else:
+                            bcnt += 1
+                    else:
+                        if board[y][x] == 'B':
+                            bcnt += 1
+                        else:
+                            wcnt += 1
+                    
+            BMIN = min(bcnt, BMIN)
+            WMIN = min(wcnt, WMIN)
 
-    return MIN
+    return min(BMIN, WMIN)
 
-
-
-print(try1())
+print(main())
