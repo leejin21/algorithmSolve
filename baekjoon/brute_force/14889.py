@@ -58,69 +58,52 @@ a1 = a0+1 ~ N//2+1번째; a2 = a1+1 ~ N//2+2번째
 chance = N//2 - k
 k = N//2 - chance
 
+
+예제 입력 3도 1이 안나온다는 게 문제임.
 '''
 import sys
 from collections import deque
-from functools import reduce
 
-stt = deque([0]); link = deque()
+stt = deque(); link = deque()
 
-skill = []; root = 1; N = 0
+skill = []; N = 0
+# root=0
 # root는 0 바로 다음에 stt에 들어가는 원소
-min_diff = 10000
+min_diff = 2147483647
 
 def main():
     global skill, N
     N = int(sys.stdin.readline())
     
     skill = list(map(lambda _: list(map(int, sys.stdin.readline().split())), range(N)))
-    stt_ability = 0; link_ability = 0
-    
-    drawNew2Teams(root, N//2-1, 0, 0)
+    drawNew2Teams(0, N//2, 0)
     print(min_diff)
 
-def drawNew2Teams(cur, chance, stt_ability, link_ability):
-    global stt, link, N
-    stt_change = 0; link_change = 0
-    
-    print(0, root, cur)
-    print('chance = ', chance, stt, link)
-
-    stt_change += appendNew2Team(stt, cur)
-    chance -= 1
-    if root == N/2 + 1 and chance == 0: # 모든 세트 완전히 종료
-        print(0, root, cur)
-        print('chance = ', chance, stt, link)
-        updateMin(stt_ability+stt_change, link_ability+link_change)
-        return
-    elif chance > 0: # 세트 아직 덜 끝남.
-        print(0, root, cur)
-        print('chance = ', chance, stt, link)
-        for next in range(cur+1, N-chance+1):
-            if cur+1 != next: 
-                link_change += addNewBs2Link(cur+1, next)
-                # link에 추가
-            drawNew2Teams(next, chance, stt_ability+stt_change, link_ability+link_change)
+def drawNew2Teams(cur, chance, stt_skill):
+    stt_skill += appendNew2Team(stt, cur); chance -= 1
+    if chance == 0:
+        link_skill = findMissedNewBsLink()
+        updateMin(stt_skill, link_skill)
+        # print("세트 끝남:", stt, link)
+        # print(min_diff, stt_skill, link_skill)
+        stt.pop()
+        while(len(link)!=0): link.pop()
     else:
-        # N/2개 다 뽑았고 다음으로 넘어가기 직전.
-        if cur+1 != N: 
-            link_change += addNewBs2Link(cur+1, N)
-            # 직전 뽑은 것+1~ 마지막까지 link에 추가
-        updateMin(stt_ability+stt_change, link_ability+link_change)
-        print("=======마무리, min", min_diff, "=========")
-        print(0, root, cur)
-        print('chance = ', chance, stt, link)
-        print("=======마무리=========")
-        if cur == N-1:
-            # root 바뀌는 경우
-            initValues()
-            stt_ability = 0; link_ability = addNewBs2Link(1, root)
-            chance = N//2 -2; cur = root-1
-        else:
-            stt.pop()
+        for k in range(cur+1, N-chance+1):
+            drawNew2Teams(k, chance, stt_skill)
+        stt.pop()
             
-            [link.pop() for _ in range(cur+1, N)]
-        drawNew2Teams(cur+1, chance+1, stt_ability, link_ability)
+def findMissedNewBsLink():
+    add_link_ab = 0
+    if len(stt) != len(link):
+        p = 0
+        for i in range(len(stt)):
+            add_link_ab += addNewBs2Link(p+1, stt[i])
+            # print(p, stt[i], add_link_ab)
+            p = stt[i]
+        if stt[i]!=N-1: add_link_ab += addNewBs2Link(p+1, N)
+        # print(p, stt[i], add_link_ab)
+    return add_link_ab
 
 def addNewBs2Link(front, end):
     # print(front, end)
@@ -146,9 +129,43 @@ def updateMin(stt_ability, link_ability):
     diff = abs(stt_ability - link_ability)
     min_diff = diff if diff<min_diff else min_diff
 
-def initValues():
-    global root, stt, link
-    root+= 1; stt = deque([0]); link = deque()
+main()
+
+def try2(cur, chance, stt_ability, link_ability):
+    global stt, link, N
+    pre_stt_ability = stt_ability; pre_link_ability = link_ability
+    print("==============함수 시작================")
+    stt_ability += appendNew2Team(stt, cur)
+    chance -= 1
+    if chance == 0: 
+        # 해당 세트는 끝남
+        link_ability += findMissedNewBsLink()
+        updateMin(stt_ability, link_ability)
+        if cur==N-1: 
+            # a1=root인 모든 세트 종료
+            print(root, "인 모든 세트 종료")
+            print(0, root, cur)
+            print('chance = ', chance, stt, link)
+            # return
+        else: 
+            # a1=root인 세트 덜 끝남
+            print(root, "인 어떤 세트 종료")
+            print(0, root, cur)
+            print('chance = ', chance, stt, link)
+            stt.pop()
+            while(len(link)!=0): link.pop()
+            try2(cur+1, chance+1, pre_stt_ability, pre_link_ability)
+    elif chance > 0:
+        # 해당 세트 아직 덜 끝남.
+        print(root, "인 어떤 세트 미종료")
+        print(0, root, cur)
+        print('chance = ', chance, stt, link)
+        # TODO 여기가 문제! 왜 더럽게 남겨질까? 어떻게 하면 덜 더럽게 남겨질까?
+        print('for문 시작')
+        # for next in range(cur+1, N-chance+1):
+        #     drawNew2Teams(next, chance, stt_ability, link_ability)
+        try2(cur+1, chance, stt_ability, link_ability)
+        print("for문 끝", 0, root, cur)
 
 # try1
 def drawNew2Teams2(cur, depth, stt_ability, link_ability):
@@ -190,4 +207,3 @@ def initValues2():
     root+= 1; stt = deque(); link = deque()
     stt_ability = 0; link_abilty = 0
 
-main()
