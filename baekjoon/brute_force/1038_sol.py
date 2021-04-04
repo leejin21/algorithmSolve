@@ -30,10 +30,15 @@ def solve(n):
 
 
 if __name__ == "__main__":
-    n = int(sys.stdin.readline())
-    if n >= 1023:
-        print(-1)
-    elif n == 0:
-        print(0)
-    else:
-        print(solve(n))
+
+    while(True):
+        n = int(sys.stdin.readline())
+        if n >= 1023:
+            print(-1)
+        elif n == 0:
+            print(0)
+        else:
+            print(solve(n))
+        print("종료?")
+        if input() == "y":
+            break

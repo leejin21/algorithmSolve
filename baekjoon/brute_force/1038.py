@@ -24,30 +24,35 @@ TRY 2:
 반례: 9876543210000000
 따라서 0이 두개 이상 return하면 안됨.
 
-100도 안됨.
-
-"굳이 어려운 길로 가지 말자.. 제발..."
-
-다시 풀기....
+TRY 3:
+1001은 왜 안되는 거지?
 ...
 
 '''
 import sys
 from collections import deque
+sys.setrecursionlimit(10 ** 9)
+
 memo = []; N = 0; cnt = 9
 ans = deque(); noAns = False
 
-def main():
+def main(n):
     global memo, N, cnt
-    N = int(sys.stdin.readline())
+    # N = int(sys.stdin.readline())
+    N = n
     if N <= 9:
-        print(N); return
+        # print(N); return
+        return N
+    elif N >= 1023:
+        # print(-1); return
+        return -1
     memo += [0]*10, [1]*10, [0]*10,
     digit = 2; front = 1; cnt =9
     last = (0, 0, 0)       # dummy init
 
     while(cnt < N):
         last = (digit, front, cnt)
+        
         memo[digit][front] = getDescCnts(digit, front)
         
         cnt += memo[digit][front]
@@ -57,26 +62,33 @@ def main():
             digit += 1; front = 1
         else:
             front += 1
-
+    
     if cnt == N:
-        while(digit>0):
-            ans.append(front-1)
-            front -= 1; digit -= 1
+        last_digit, last_front, _ = last
+        while(last_digit>0):
+            ans.append(last_front)
+            last_front -= 1; last_digit -= 1
     else:
         last_digit, last_front, cnt = last
         findDescNum(last_digit, last_front)
-    print(memo)
-    print(int(''.join(map(str, ans))))
+    
+    return int(''.join(map(str, ans)))
+    # print(int(''.join(map(str, ans))))
     
 
 def findDescNum(digit, front):
     global cnt, noAns
+    # print(digit, front, cnt)
     if cnt == N:
-        if digit == 2:
-            ans.appendleft(0)
-        elif digit > 2:
-            ans.clear()
+        if digit == 1:
+            ans.appendleft(front)
+        elif digit >= 2 and front==0:
             noAns = True
+        elif digit >= 2 and front > 0:
+            # 4321,... 같은 애들 소외되지 않게 추가해주기
+            while(digit>0):
+                ans.append(front)
+                digit -= 1; front-=1
         else:
             ans.appendleft(front)
     else:
@@ -84,6 +96,7 @@ def findDescNum(digit, front):
         for k in range(front):
             pre_temp = temp
             temp += getDescCnts(digit-1, k)
+            
             if temp >= N:
                 cnt = temp if temp==N else pre_temp
                 findDescNum(digit-1, k)
@@ -99,5 +112,52 @@ def getDescCnts(digit,front):
     for k in range(front):
         cnt += memo[digit-1][k]
     return cnt
-    
-main()
+
+
+def solve(n):
+    cnt = 0
+    num = 1
+    while True:
+        str_num = str(num)
+        flag = True
+        if len(str_num) == 1:
+            pass
+        else:
+            for i in range(1, len(str_num)):
+                if int(str_num[i]) < int(str_num[i - 1]):
+                    continue
+                else:
+                    start = str_num[:i - 1]
+                    mid = str(int(str_num[i - 1]) + 1)
+                    end = '0' + str_num[i + 1:]
+                    num = int(start + mid + end)
+                    flag = False
+                    break
+        if flag:
+            cnt += 1
+            if cnt == n:
+                return num
+            num += 1
+
+def main2(n):
+    # n = int(sys.stdin.readline())
+    if n >= 1023:
+        return -1
+    elif n == 0:
+        return 0
+    else:
+        return solve(n)
+
+
+# for i in range(1000,1100):
+#     print(i, end=" ")
+#     m2 = main2(i); m1 = main(i)
+#     print(m2, m1)
+#     res = m2 == m1
+#     if not res:
+#         print("ERRORRR")
+#     ans.clear()
+
+# n = int(input())
+# print(main(n))
+# print(main2(n))
