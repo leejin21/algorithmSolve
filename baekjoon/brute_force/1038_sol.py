@@ -1,3 +1,5 @@
+# https://jjangsungwon.tistory.com/119
+# 의 코드입니다.
 import sys
 
 sys.setrecursionlimit(10 ** 9)
