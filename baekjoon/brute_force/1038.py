@@ -31,21 +31,20 @@ TRY 3:
 '''
 import sys
 from collections import deque
-sys.setrecursionlimit(10 ** 9)
+# sys.setrecursionlimit(10 ** 9)
 
 memo = []; N = 0; cnt = 9
 ans = deque(); noAns = False
 
-def main(n):
+def main():
     global memo, N, cnt
-    # N = int(sys.stdin.readline())
-    N = n
+    N = int(sys.stdin.readline())
     if N <= 9:
-        # print(N); return
-        return N
+        print(N); return
+        # return N
     elif N >= 1023:
-        # print(-1); return
-        return -1
+        print(-1); return
+        # return -1
     memo += [0]*10, [1]*10, [0]*10,
     digit = 2; front = 1; cnt =9
     last = (0, 0, 0)       # dummy init
@@ -72,8 +71,8 @@ def main(n):
         last_digit, last_front, cnt = last
         findDescNum(last_digit, last_front)
     
-    return int(''.join(map(str, ans)))
-    # print(int(''.join(map(str, ans))))
+    # return int(''.join(map(str, ans)))
+    print(int(''.join(map(str, ans))))
     
 
 def findDescNum(digit, front):
@@ -114,50 +113,4 @@ def getDescCnts(digit,front):
     return cnt
 
 
-def solve(n):
-    cnt = 0
-    num = 1
-    while True:
-        str_num = str(num)
-        flag = True
-        if len(str_num) == 1:
-            pass
-        else:
-            for i in range(1, len(str_num)):
-                if int(str_num[i]) < int(str_num[i - 1]):
-                    continue
-                else:
-                    start = str_num[:i - 1]
-                    mid = str(int(str_num[i - 1]) + 1)
-                    end = '0' + str_num[i + 1:]
-                    num = int(start + mid + end)
-                    flag = False
-                    break
-        if flag:
-            cnt += 1
-            if cnt == n:
-                return num
-            num += 1
-
-def main2(n):
-    # n = int(sys.stdin.readline())
-    if n >= 1023:
-        return -1
-    elif n == 0:
-        return 0
-    else:
-        return solve(n)
-
-
-# for i in range(1000,1100):
-#     print(i, end=" ")
-#     m2 = main2(i); m1 = main(i)
-#     print(m2, m1)
-#     res = m2 == m1
-#     if not res:
-#         print("ERRORRR")
-#     ans.clear()
-
-# n = int(input())
-# print(main(n))
-# print(main2(n))
+main()
