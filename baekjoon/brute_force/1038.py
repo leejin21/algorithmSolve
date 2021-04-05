@@ -34,7 +34,7 @@ from collections import deque
 # sys.setrecursionlimit(10 ** 9)
 
 memo = []; N = 0; cnt = 9
-ans = deque(); noAns = False
+ans = deque()
 
 def main():
     global memo, N, cnt
@@ -76,35 +76,27 @@ def main():
     
 
 def findDescNum(digit, front):
-    global cnt, noAns
+    global cnt
     # print(digit, front, cnt)
     if cnt == N:
-        if digit == 1:
-            ans.appendleft(front)
-        elif digit >= 2 and front==0:
-            noAns = True
-        elif digit >= 2 and front > 0:
-            # 4321,... 같은 애들 소외되지 않게 추가해주기
-            while(digit>0):
-                ans.append(front)
-                digit -= 1; front-=1
-        else:
-            ans.appendleft(front)
+        # 4321,... 같은 애들 소외되지 않게 추가해주기
+        while(digit>0):
+            ans.append(front)
+            digit -= 1; front-=1
     else:
         temp = cnt
         for k in range(front):
             pre_temp = temp
-            temp += getDescCnts(digit-1, k)
+            temp += memo[digit-1][k]
             
             if temp >= N:
                 cnt = temp if temp==N else pre_temp
                 findDescNum(digit-1, k)
-                if not noAns:
-                    ans.appendleft(front)
+                ans.appendleft(front)
                 break
 
 def getDescCnts(digit,front):
-    # S(digit, k) = 1+ S(digit,1) + ... + S(digit, k-1)
+    # S(digit, k) = S(digit,1) + ... + S(digit, k-1)
     if digit == 1:
         return 1
     cnt = 0
