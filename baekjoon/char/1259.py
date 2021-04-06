@@ -1,3 +1,4 @@
+# 백준 1259. 팰린드롬수
 '''
 https://www.acmicpc.net/problem/1259
 문제
@@ -11,3 +12,18 @@ https://www.acmicpc.net/problem/1259
 출력
 각 줄마다 주어진 수가 팰린드롬수면 'yes', 아니면 'no'를 출력한다.
 '''
+import sys
+
+def main():
+    while(True):
+        ans = 'yes'
+        num = sys.stdin.readline()[:-1]
+        if num == '0':
+            break
+        for i in range(len(num)//2):
+            if num[i] != num[-1*i-1]:
+                ans = 'no'
+                break
+        print(ans)
+
+main()
