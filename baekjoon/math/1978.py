@@ -14,4 +14,33 @@
 
 3
 
+소수 구할 때 주의사항
+* 정수(루트 n)보다 작거나 같고, 1보다 큰 수들로 나누어 떨어지는 지 확인해야 함
+* 1은 소수가 아님.
+
+추가사항
+* sqrt는 math 라이브러리 안에서 import해야 함(내장 함수가 아님.)
+
 '''
+
+# 1은 소수가 아님.
+
+import sys
+from math import sqrt
+
+N = int(sys.stdin.readline())
+natnums = list(map(lambda i: int(i), sys.stdin.readline().split(" ")))
+cnt = 0; prime = True
+
+for n in natnums:
+    prime = True
+    if n == 1:
+        prime = False
+    for i in range(2, int(sqrt(n))+1):
+        if n%i == 0: # 소수가 아님
+            prime = False
+            break
+    if prime:
+        cnt += 1
+
+print(cnt)
