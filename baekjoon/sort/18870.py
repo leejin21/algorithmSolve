@@ -26,6 +26,8 @@ set로 하면-> {2, 4, -9, -10}
 keys.sort하면 -> [-10, -9, 4, 2]
 dict {-10:0, -9: 1, 4: 2, 2:3}
 
+* 특이점: sorted(list(set(loc_list)))의 위치를 for문 안으로 옮겨줬더니 잘 됨.
+
 '''
 
 import sys; read = sys.stdin.readline
@@ -33,9 +35,10 @@ import sys; read = sys.stdin.readline
 N = read()
 loc_list = list(map(int, read()[:-1].split(" ")))
 
-sorted_locs = sorted(list(set(loc_list)))
 zip_result = dict()
-for i, l in enumerate(sorted_locs):
+
+for i, l in enumerate(sorted(list(set(loc_list)))):
     zip_result[l] = i
 
-print(zip_result)
+for l in loc_list:
+    print(zip_result[l], end=" ")
