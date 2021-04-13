@@ -23,7 +23,8 @@ q = deque(range(1,N+1))
 josephus = []
 
 def calCritPoint():
-    # (N,K)=(5,7)일 때 (5,2)와 동일한 결과임. 그런데 (N,K)=(3,3)일 때 while문을 지나치고 0번째 요소부터 pop함(원래 0번째 pop&append, 1번쨰 pop&append, 2번째 요소는 pop만 해야 함.)
+    # K%len(q)-1을 적용하면 (N,K)=(5,7)일 때 (5,2)와 동일한 결과임. 그런데 (N,K)=(3,3)일 때 그냥 K%len(q)-1을 하는 경우 while문을 지나치고 0번째 요소부터 pop함(원래 0번째 pop&append, 1번쨰 pop&append, 2번째 요소는 pop만 해야 함.)
+    # 그런데 len(q)-1을 하면 이상하게 시간이 더 걸려서(약 100ms 정도 더) 그냥 K-1로 처리해 줌.
     return K%len(q)-1 if K%len(q)!=0 else K-1
 
 while(len(q)>0):
