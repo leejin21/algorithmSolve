@@ -39,6 +39,8 @@ zip_result = dict()
 
 for i, l in enumerate(sorted(list(set(loc_list)))):
     zip_result[l] = i
+# dic = {value: index for index, value in enumerate(arr2)}
+# 이렇게 쓸 수 있음.
 
 for l in loc_list:
     print(zip_result[l], end=" ")
