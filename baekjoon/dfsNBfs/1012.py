@@ -46,37 +46,41 @@ TRY 1에서
 
 TRY 2
 
-그냥 그래프로 구하기. 그래프 다 까먹었지만..
-그냥 노드 들어올 때마다 bfs로 찾고 visited로 중복 안되게 체크.
+그냥 그래프로 구하기. 
+대신 이번에는 dfs와 visited를 이용해서 미리 "이 지점에 field가 1이면 같은 그룹입니다"를 표시해두는 거임.
+https://velog.io/@jengyoung/baekjoon1012 참고
 
 '''
 
-import sys; read = sys.stdin.readline
+import sys
 
-T = int(read()); bugs = []
+def dfs(x, y):
+    dx, dy = [0,0,1,-1], [1,-1,0,0]
+    for i in range(4):
+        nx, ny = x + dx[i], y + dy[i]
+        if nx>=N or nx<0 or ny>=M or ny<0 or visited[nx][ny]:
+            continue
+        if ground[nx][ny] != 0:
+            visited[nx][ny] = 1
+            dfs(nx, ny)
+
+sys.setrecursionlimit(10**5)
+read = sys.stdin.readline
+T = int(read())
 for _ in range(T):
-    M, N, K = tuple(map(int, read()[:-1].split(" ")))
-    ground = [[0 for m in range(M)] for n in range(N)]
+    M, N, K = map(int, read().split())
+    ground = [[0]*M for n in range(N)]
+    visited = [[0]*M for n in range(N)]
     bug = 0
 
     for k in range(K):
-        x, y = tuple(map(int, read()[:-1].split(" ")))
+        x, y = map(int, read().split())
         ground[y][x] = 1
-        # print(ground)
     
-    # print("배추가 존재하지 않는 경우")
-    for i in range(M):
-        for j in range(N):
-            if ground[j][i] == 1:
-                if (j>0 and ground[j-1][i] == 1) or (i>0 and ground[j][i-1] == 1):
-                    # 좌 또는 상에 배추가 존재하는 경우
-                    continue
-                if (i+1<M and ground[j][i+1] == 1 and ground[j-1][i+1] == 1):
-                    continue
-                # 배추가 존재하지 않는 경우
-                # print(i, j)
+    for i in range(N):
+        for j in range(M):
+            if ground[i][j] and not visited[i][j]:
+                visited[i][j] = 1
                 bug += 1
-    bugs.append(bug)
-
-for bug in bugs:
+                dfs(i, j)
     print(bug)
