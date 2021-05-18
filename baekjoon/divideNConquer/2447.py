@@ -50,7 +50,6 @@ def getPattern(n):
                     for x in range(n//3):
                         pattern[x+i*n//3].extend(unit[x])
                 
-            
         return pattern
                     
         
