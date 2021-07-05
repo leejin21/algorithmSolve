@@ -23,6 +23,50 @@
 
 둘째 줄부터 한 줄에 하나씩 제일 아래에 놓인 계단부터 순서대로 각 계단에 쓰여 있는 점수가 주어진다. 계단의 개수는 300이하의 자연수이고, 계단에 쓰여 있는 점수는 10,000이하의 자연수이다.
 
+
+6
+10
+20
+15
+25
+10
+20
+
 출력
 첫째 줄에 계단 오르기 게임에서 얻을 수 있는 총 점수의 최댓값을 출력한다.
+
+
+
+시간 초과 떠서 다시 해야 함.
+
+
 '''
+
+import sys; read = sys.stdin.readline
+sys.setrecursionlimit(3000)
+
+def step(i, pre_step, tot):
+    global MAX, step_memo
+    pre = 1 if pre_step else 0
+    if i <0:
+        step_memo[0][pre] = max(step_memo[0][pre], tot)
+    elif tot + stairs[i] > step_memo[i][pre]:
+            new_tot = tot + stairs[i]
+            step_memo[i][pre] = new_tot
+            if pre_step == False:
+                step(i-1, True, new_tot)
+            step(i-2, False, new_tot)
+
+    # print(i, stairs[i], pre_step, tot)
+
+N = int(read())
+stairs = []
+MAX = -1
+
+for i in range(N):
+    stairs.append(int(read()))
+
+step_memo = [[0,0] for _ in range(N)]
+
+step(len(stairs)-1, False, 0)
+print(max(step_memo[0]))
