@@ -18,8 +18,18 @@ i(2 ≤ i ≤ N-1)번 집의 색은 i-1번, i+1번 집의 색과 같지 않아�
 49 60 57
 13 89 99
 
+
+100 100 10
+100 100 1
+100 100 100
+
+
+
+
 출력
 첫째 줄에 모든 집을 칠하는 비용의 최솟값을 출력한다.
+
+시간 초과 뜸. 
 
 
 '''
@@ -27,19 +37,32 @@ import sys; read = sys.stdin.readline
 
 sys.setrecursionlimit(10000)
 
-def colorHouse(num, cost, pre_color):
+def colorHouse1(num, cost, pre_color):
+    # 시간 초과
     global MIN
-    if num >= len(color_list):
+    if num >= len(cost_list):
         MIN = min(MIN, cost)
     else:
-        for color in range(len(color_list)):
-            if color != pre_color:
-                colorHouse(num+1, cost+color_list[num][color], color)
-        
+        for color in range(len(cost_list[0])):
+            next_cost = cost+cost_list[num][color]
+            if color != pre_color and next_cost<MIN:
+                colorHouse1(num+1, next_cost, color)
+            
+def colorHouse():
+    # 이런 경우 전 단계의 노드들이 3개로 정해져 있는 상태이므로, 그냥 직접 비교해주면 됨.
+    color_list = [[0]*3 for i in range(len(cost_list))]
+    color_list[0] = cost_list[0]
     
+    for i in range(1, len(cost_list)):
+        color_list[i][0] = cost_list[i][0] + min(color_list[i-1][1], color_list[i-1][2])
+        color_list[i][1] = cost_list[i][1] + min(color_list[i-1][0], color_list[i-1][2])
+        color_list[i][2] = cost_list[i][2] + min(color_list[i-1][0], color_list[i-1][1])
+    print(min(color_list[-1]))
+
+        
 N = int(read())
-color_list = list(map(lambda x: list(map(int, read()[:-1].split())), range(N)))
+cost_list = list(map(lambda x: list(map(int, read()[:-1].split())), range(N)))
 MIN = 10000000
-colorHouse(0, 0, -1)
+colorHouse()
 print(MIN)
 # print(color_list)
