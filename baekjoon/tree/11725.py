@@ -35,7 +35,6 @@ class Node:
         self.num = num
         self.down_link = defaultdict(returnFalse)
         
-
 def returnFalse():
     return False
 
