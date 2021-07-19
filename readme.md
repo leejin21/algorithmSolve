@@ -2,3 +2,4 @@
 
 programmers/graph/ranking.py
 baekjoon/tree/1918.py
+baekjoon/tree/5639.py
