@@ -1,11 +1,5 @@
 # 트리의 지름
 
-'''
-일단 2차원 리스트 만들어 주기
-
-
-
-'''
 import sys; read = sys.stdin.readline
 
 class Node:
