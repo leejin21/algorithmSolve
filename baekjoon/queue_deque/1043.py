@@ -43,7 +43,6 @@ knowtruth = list(map(int, read()[:-1].split(" ")))[1:]
 pplWhoKnowTruth = [False]*(N+1)
 #0: 무지성, 1: 진실을 앎 
 
-msg_party = 0
 # party_q = deque()
 party_list = []
 
@@ -61,11 +60,13 @@ while(party_q and q_len > len_same):
     q_len -= 1
     thisPartyTruth = False
     for pnum in range(len(party_data)):
+        # 이미 진실을 아는 자들이 파티에 참여하는 지 검출
         # pnum = participant num(참여자 번호)
         if pplWhoKnowTruth[party_data[pnum]]:
             thisPartyTruth = True
             break
     if thisPartyTruth:
+        # 해당 파티에서 진실을 말하기로 결정
         len_same = 0
         for pnum in range(len(party_data)):
             pplWhoKnowTruth[party_data[pnum]] = True
