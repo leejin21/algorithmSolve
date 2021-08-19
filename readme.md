@@ -4,6 +4,7 @@ programmers/graph/ranking.py
 programmers/graph/week3.py
 baekjoon/tree/1918.py
 baekjoon/tree/5639.py
+programmers/level12/newIdSuggest.py
 
 풀고 정리 안 한 문제 목록
 
