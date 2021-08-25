@@ -8,6 +8,7 @@ baekjoon/tree/5639.py
 풀고 정리 안 한 문제 목록
 
 programmers/level12/compressString.py
+programmers/level12/fineSquare.py
 
 이론 공부 안한 부분
 [파이썬 알고리즘 인터뷰] 18장 이진 검색
