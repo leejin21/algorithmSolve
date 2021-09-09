@@ -5,12 +5,14 @@ programmers/graph/week3.py
 baekjoon/tree/1918.py
 baekjoon/tree/5639.py
 baekjoon/priorityq_heap/20936.py
+programmers/level12/searchRanking.py
 
 풀고 정리 안 한 문제 목록
 
 programmers/level12/compressString.py
 programmers/level12/fineSquare.py
 programmers/level12/expressionMax.py
+programmers/level12/vowelDict.py
 
 이론 공부 안한 부분
 [파이썬 알고리즘 인터뷰] 18장 이진 검색
