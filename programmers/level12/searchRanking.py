@@ -1,6 +1,12 @@
 # 효율성 테스트에서 틀림 판정, 정확성 테스트는 맞음.
 '''
-set으로 교집합 찾기!
+16개의 케이스로 딕셔너리에 키로 저장, 밸류 = [점수]
+
+cpp, java, python, -
+backend, frontend, -
+junior, senior, -
+chicken, pizza, -
+
 '''
 import sys; read = sys.stdin.readline
 import collections
