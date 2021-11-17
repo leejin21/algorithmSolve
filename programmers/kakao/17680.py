@@ -7,12 +7,14 @@
 [0]
 2 1 3 0
 
+[조건 수도 코드로 써가면서 하기.......]
 '''
 import collections
 
 def solution(cacheSize, cities):
     answer = 0
     queue = collections.deque()
+    if len(cities) == 0: return 5
     for city in cities:
         cityLowerCase = city.lower()
         if cityLowerCase in queue:
@@ -27,7 +29,8 @@ def solution(cacheSize, cities):
             # cache miss
             if len(queue) >= cacheSize and cacheSize >0:
                 queue.popleft()
-            queue.append(cityLowerCase)
+            if cacheSize != 0:
+                queue.append(cityLowerCase)
             answer += 5
         print(queue, answer)
     return answer
