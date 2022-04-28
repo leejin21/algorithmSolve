@@ -1,0 +1,79 @@
+'''
+[드래곤 커브]
+
+1. 0세대부터 만들어서 차차 붙여 나가면서 기록하기
+ -> k세대 드래곤 커브를 만들 때
+    -> 현 기준점부터 시작해 모든 k-1세대 드래곤 커브를 돌며(시작점까지) 
+    -> 90도씩 돌려준다.
+        -> 패턴은: prev_d = 전 세대 선분의 방향 이면 cur_d = prev_d + 1
+        -> 즉, 전세대에서 d=0인 선분이었으면 현세대에서 d=1 선분이 됨
+        -> (예외) 방향은 0,1,2,3이므로 전세대 방향 + 1을 4로 나누고 그 나머지를 cur_d로 지정한다
+    -> 돌려준 선분을 덧붙여 준다.
+        -> 이때 prev 선분의 시작점은 중요하지 않고, 방향만 중요하다.
+        -> 어차피 현세대에서 만드는 드래곤 커브의 시작점에서 출발할 것이기 떄문! 방향이 모든 것을 결정해 준다.
+
+2. 정사각형 개수를 센다
+ -> 정사각형은 O(n^2)으로 왼쪽 위 점을 기준으로 4개의 점(왼-위, 오-위, 왼-아, 오-아)이 모두 1일 경우
+     카운트+1
+ -> 이떄 out of bound가 나지 않도록 조심한다.
+
+'''
+
+MAX = 101
+
+def main(N, curves):
+    plane = [[0]*MAX for _ in range(MAX)]
+    stack = [] # stack = [{stt: (si, sj), end: (ei, ej), dir: int}]
+    d_dict = {0: (0,1), 1:(-1,0), 2:(0,-1), 3:(1, 0)} # i, j 순(y, x 순)
+    get_endpoint = lambda i, j, d: (i + d_dict[d][0], j + d_dict[d][1]) # (ei, ej) 형식
+
+    for c_info in curves:
+        j, i, d, g = c_info # i, j = y, x
+        cur_g = 0
+        stack = []
+        end_i, end_j = get_endpoint(i, j, d)
+        stack.append({"stt": (i, j), "end": (end_i, end_j), "dir": d})
+        plane[i][j] = 1; plane[end_i][end_j] = 1
+        
+        while(cur_g < g):
+            cur_g += 1
+            temp = []
+
+            # 기준점에서 시작
+            line = stack[-1]
+            d = (line["dir"]+1)%4
+            stt_i, stt_j = line["end"]
+            end_i, end_j = get_endpoint(stt_i, stt_j, d)
+            temp.append({"stt": (stt_i, stt_j), "end": (end_i, end_j), "dir": d})
+            plane[stt_i][stt_j] = 1; plane[end_i][end_j] = 1
+
+
+            # 이후는 d만 받아와서 그리기
+            for l_idx in range(len(stack)-2, -1, -1):
+                d = (stack[l_idx]["dir"]+1)%4
+                stt_i, stt_j = end_i, end_j
+                end_i, end_j = get_endpoint(end_i, end_j, d)
+
+                temp.append({"stt": (stt_i, stt_j), "end": (end_i, end_j), "dir": d})
+                plane[stt_i][stt_j] = 1; plane[end_i][end_j] = 1
+
+            stack += temp
+    
+        # print(stack)
+    
+    # 2. plane에서 숫자 세기
+
+    checkSquare = lambda i, j: plane[i+1][j] and plane[i][j+1] and plane[i+1][j+1]
+    cnt = 0
+
+    for i in range(len(plane)):
+        for j in range(len(plane)):
+            if plane[i][j] == 1 and i<MAX-1 and j<MAX-1 and checkSquare(i, j):
+                cnt += 1
+
+    return cnt
+
+N = int(input())
+curves = [[int(i) for i in input().split(" ")] for _ in range(N)]
+
+print(main(N, curves))
