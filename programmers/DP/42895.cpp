@@ -22,6 +22,9 @@ unordered_map<int, int> memo;
 ==효율성==
 1. hash map 맞아?
 -> hash map 시간복잡도?
+
+==코너케이스==
+1. number == NNNNN인 경우
 */
 
 void dfs(bool first, int& N, int& number, int depth, int X){
