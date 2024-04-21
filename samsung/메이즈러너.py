@@ -26,28 +26,35 @@ r,c, R,C
 참가자도 옮기기(해당하는)
 출구도 옮기기
 
-(r,c)
+10 10 100
+7 7 1 0 4 8 3 1 0 9
+2 1 8 4 1 9 5 2 3 7
+7 2 9 8 6 3 6 8 8 1
+1 5 9 0 4 0 9 5 0 8
+0 0 0 8 4 1 6 0 1 4
+9 5 8 9 2 9 7 0 0 7
+3 0 7 1 6 5 3 2 6 0
+9 2 7 3 6 6 7 6 6 8
+0 5 0 9 4 9 3 4 2 3
+9 0 3 0 2 6 0 4 8 7
+5 2
+9 3
+5 2
+4 4
+7 10
+6 9
+5 8
+7 10
+10 7
+5 8
+10 4
 
-1 2 3
-4 5 6
-7 8 9
-
-(1,1) (1,2) (1,3)
-(2,1) (2,2) (2,3)
-(3,1) (3,2) (3,3)
-
-7 4 1
-8 5 2
-9 6 3
-
-(3,1) (2,1) (1,1)
-(3,2) (2,2) (1,2)
-(3,3) (2,3) (1,3)
 
 '''
 import sys; read = sys.stdin.readline
 maze = []
 participants = []
+partCntExited = 0
 exit = []
 
 def isEmptyRoad(r,c):
@@ -56,9 +63,11 @@ def isEmptyRoad(r,c):
     return False
     
 def checkIfArriveExit(pInfo, eInfo):
+    global partCntExited
     p_r, p_c = pInfo
     e_r, e_c = eInfo
     if p_r == e_r and p_c == e_c:
+        partCntExited += 1
         return True
     return False
 
@@ -68,7 +77,7 @@ def alreadyExited(pInfo):
 def moveParticipants(pInfo, eInfo):
     # pInfo = participant info = [r,c]
     # eInfo = exit info = [r,c]
-    np_r, np_c = [-1, -1] # new location for participants
+    np_r, np_c = pInfo # new location for participants
     p_r, p_c = pInfo
     e_r, e_c = eInfo
     upDownDetermin = False
@@ -100,61 +109,232 @@ def prettyPrint(pList):
             print(i, end = ' ')
         print()
 
+def getRangeForCase(eInfo, pInfo, height, width):
+    
+    r1 = 0; c1 = 0 # 좌상단
+    r2 = 0; c2 = 0 # 우하단
+
+    e_r, e_c = eInfo
+    p_r, p_c = pInfo
+
+    if p_r <= e_r and p_c <= e_c:
+        if width >= height:
+            r1 = e_r - width
+            c1 = e_c - width
+            r2 = r1 + width
+            c2 = c1 + width
+        elif width < height:
+            r1 = e_r - height
+            c1 = e_c - height
+            r2 = r1 + height
+            c2 = c1 + height
+    elif p_r <= e_r and p_c > e_c:
+        if width >= height:
+            r1 = e_r - width
+            c1 = e_c
+            r2 = r1 + width
+            c2 = c1 + width
+        elif width < height:
+            r1 = e_r - height
+            c1 = e_c
+            r2 = r1 + height
+            c2 = c1 + height
+    elif p_r > e_r and p_c <= e_c:
+        if width >= height:
+            r1 = e_r
+            c1 = e_c - width
+            r2 = r1 + width
+            c2 = c1 + width
+        elif width < height:
+            r1 = e_r
+            c1 = e_c - height
+            r2 = r1 + height
+            c2 = c1 + height
+    elif p_r > e_r and p_c > e_c:
+        if width >= height:
+            r1 = e_r
+            c1 = e_c
+            r2 = r1 + width
+            c2 = c1 + width
+        elif width < height:
+            r1 = e_r
+            c1 = e_c
+            r2 = r1 + height
+            c2 = c1 + height
+
+    # 예외처리
+    if r1 < 0:
+        r1 = 0
+        if width >= height:
+            r2 = r1 + width
+            c2 = c1 + width
+        elif width < height:
+            r2 = r1 + height
+            c2 = c1 + height
+    if c1 < 0:
+        c1 = 0
+        if width >= height:
+            r2 = r1 + width
+            c2 = c1 + width
+        elif width < height:
+            r2 = r1 + height
+            c2 = c1 + height
+    if r2 > len(maze)-1:
+        r2 = len(maze)-1
+        if width >= height:
+            r1 = r2 - width
+            c1 = c2 - width
+        elif width < height:
+            r1 = r2 - height
+            c1 = c2 - height
+    if c2 > len(maze)-1:
+        c2 = len(maze)-1
+        if width >= height:
+            r1 = r2 - width
+            c1 = c2 - width
+        elif width < height:
+            r1 = r2 - height
+            c1 = c2 - height
+
+    slength = abs(r2 - r1) + 1
+
+    return r1, c1, r2, c2, slength
+
 def getRangeToRotate(eInfo):
     '''
     포함한: 가장 작은 정사각형 범위 정하기 -> 좌상단, 우하단 좌표
-    포함으므로 max(세로길이, 가로길이) 중 골라서
-        세로인 경우: abs(p_r - e_r)
-        가로인 경우: abs(p_c - e_c) -> 좌상단 = ()
+    1우) 포함으므로 max(세로길이, 가로길이) 중 골라서
+        세로인 경우: abs(세로길이)
+        가로인 경우: abs(가로길이)
+        <minSquareLen>
+    2우) 좌상단 r좌표 더 작은 것 <minSquareR>
+    3우) 좌상단 c좌표 더 작은 것 <minSquareC>
 
     가로=|p_r-e_r|, 세로=|p_c-e_c|
-    좌상단 == 출구
-        (1) 세로 > 가로
-            우하단 r = e_r + |p_c - e_c|
-            우하단 c = p_c
-        (2) 세로 < 가로
-            우하단 r = p_r
-            우하단 c = p_c - |p_r - e_r|
-
-    좌상단 != 출구
-        (1) 세로 > 가로
+        (1) e_c > p_c && 세로 >= 가로
             좌상단 r = e_r - |p_c - e_c|
             좌상단 c = p_c
-        (2) 세로 < 가로
+            우하단 r = e_r
+            우하단 c = e_c
+        (2) e_r > p_r && 세로 <= 가로
             좌상단 r = p_r
-            좌상단 c = p_c + |p_r - e_r|
+            좌상단 c = e_c - |p_r - e_r|
+            우하단 r = e_r
+            우하단 c = e_c
+        (3) e_c < p_c && 세로 >= 가로
+            좌상단 r = e_r
+            좌상단 c = e_c
+            우하단 r = e_r + |p_c - e_c|
+            우하단 c = p_c
+        (4) e_r < p_r && 세로 <= 가로
+            좌상단 r = e_r
+            좌상단 c = e_c
+            우하단 r = p_r
+            우하단 c = e_c + |p_r - e_r|    
     '''
-    
     e_r, e_c = eInfo
-    minSR = 20; minSC = 20
+    minSquareR1 = 20; minSquareC1 = 20
+    minSquareR2 = 0; minSquareC2 = 0
     minSquareLen = 20
     for pIdx, part in enumerate(participants):
         p_r, p_c = part
-        if e_c < p_c || (e_c == p_c && e_r < p_r):
-            # 좌상단 == 출구
-            pass
-        else:
-            # 좌상단 != 출구
-            pass
 
+        if alreadyExited(part):
+            # participant already exit
+            continue
+
+        print("PART NOT EXITED: ", p_r, p_c)
+
+        width = abs(p_r - e_r)
+        height = abs(p_c - e_c)
+
+        r1, c1, r2, c2, slength = getRangeForCase(eInfo, part, height, width)
+
+        if (minSquareLen > slength):
+            minSquareLen = slength
+            minSquareR1 = r1; minSquareC1 = c1
+            minSquareR2 = r2; minSquareC2 = c2
+        elif (minSquareLen == slength):
+            if (minSquareR1 > r1):
+                minSquareR1 = r1; minSquareC1 = c1
+                minSquareR2 = r2; minSquareC2 = c2
+            elif (minSquareR1 == r1):
+                if (minSquareC1 > c1):
+                    minSquareR1 = r1; minSquareC1 = c1
+                    minSquareR2 = r2; minSquareC2 = c2
+    
+    return minSquareR1, minSquareC1, minSquareR2, minSquareC2, minSquareLen
 
 def solution(K):
-    time = 0
-    while(time < K):
+    global partCntExited
+    time = 1
+    totalMoved = 0
+    while(time <= 10):
+        temp = [[-1]*len(maze) for i in range(len(maze))]
+        print("TIME: ", time)
+        print("EXIT: ", exit)
         # 1. 이동
+        for pInfo in participants:
+            p_r, p_c = pInfo
+            if alreadyExited(pInfo):
+                # participant already exit
+                continue
+            np_r, np_c = moveParticipants(pInfo, exit)
+            if p_r != np_r or p_c != np_c:
+                totalMoved += 1            
+            pInfo[0] = np_r; pInfo[1] = np_c
+
+            if checkIfArriveExit(pInfo, exit):
+                pInfo[0] = -1; pInfo[1] = -1
+        
+        if partCntExited == len(participants):
+            break
+        
+        print("participants")
+        prettyPrint(participants)
+        
+        # 2.1 미로 선택
+        print("MAZE")
+        prettyPrint(maze)
+
+        r1, c1, r2, c2, squareLen = getRangeToRotate(exit)
+        print("좌상단: ", r1, c1, "/ 우하단: ", r2, c2, "/ 변: ", squareLen)
+
+
+        # 2.2 미로 회전
+        # 다른 곳에 저장
+        for r in range(squareLen):
+            for c in range(squareLen):
+                # 내구도 깎고 회전
+                temp[r+r1][c+c1] = maze[squareLen-1-c+r1][r+c1] - 1 if maze[squareLen-1-c+r1][r+c1] > 0 else 0
+
+        # print("TEMP")
+        # prettyPrint(temp)
+        # 다시 덮어쓰기(실 이동)
+        for r in range(r1, r2+1):
+            for c in range(c1, c2+1):
+                maze[r][c] = temp[r][c]
+
+        # 참가자도 회전
         for pInfo in participants:
             if alreadyExited(pInfo):
                 # participant already exit
                 continue
-            moveParticipants(pInfo, exit)
-            if checkIfArriveExit(pInfo, exit):
-                pInfo[0] = -1; pInfo[1] = -1
-        
-        # prettyPrint(participants)
-        # 2. 미로 회전
-        
+            p_r, p_c =  pInfo
+            if r1 <= p_r <= r2 and c1 <= p_c <= c2:
+                # only when in range
+                r = p_r - r1; c = p_c - c1
+                pInfo[0] = c+ r1; pInfo[1] = squareLen - r - 1 + c1
+            print("참가자 회전: p_r, p_c: ", p_r, p_c, "-> TO:", pInfo)
+            
+        # 출구도 회전
+        e_r, e_c = exit
+        r = e_r - r1; c = e_c - c1
+        exit[0] = c + r1; exit[1] = squareLen - r - 1 + c1
         
         time += 1
+
+    return totalMoved
 
 N, M, K = [int(i) for i in read().split()]
 for i in range(N):
@@ -169,4 +349,5 @@ exit = [int(i)-1 for i in read().split()]
 # print(participants)
 # print(exit)
 
-solution(K)
+print(solution(K))
+print(exit[0]+1, exit[1]+1)
